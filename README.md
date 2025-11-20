@@ -1,2 +1,93 @@
 # GLaDISK
-An alternative PC option ROM to support High Density floppy drives/controllers on vintage hardware 
+
+## (Gizmo Linkage and Dynamic Information Storage Keeper) 
+A high density floppy disk PC Option ROM for XT, AT, 286, 386+ systems, supporting many vintage and modern floppy disk controllers.
+
+## Version 0.4.x (pre-release):
+- Download links here
+
+## Features
+- Drive types are software configurable using AT standard CMOS, [RTC 8088](https://github.com/spark2k06/RTC8088) or MM58167-based RTC boards
+- 2.88 MB (Perpendicular Mode) floppy drives (validated on hardware)
+- Implements advanced features of later FDC chipsets such as 16-byte FIFO/burst mode, DSR reset, EIS (implied seek), Enhanced Perpendicular Mode (500K and 1M), CONFIGURE disable polling, LOCK configuration where supported
+- Supports four floppy drives (with compatible adapter). Can be used to add support for four floppy drives to 286/386+ PCs that have only two drive BIOS support
+- Replaces slow (somtimes buggy) BIOS ROMs on old XT high density controllers (LSI, DTK, etc), or add 1.44/2.88 support to older AT or 386 systems lacking BIOS support
+- Adds BIOS support for [720K drives on XT system](https://minuszerodegrees.net/5150_5160/720k/5150_5160_formatting_a_720K_diskette.htm) having standard 360K-only adapters
+- Highly customizable features at build time
+- FAST and small ROM size (4K or less)
+
+## Requirements
+- PC, PC/XT, PC/AT, 286, 386 or above
+- A high-density compatible controller (see below)
+- A ROM socket or software image with 4K available space in option ROM memory space
+
+## Hardware supported and tested
+
+GLaDISK should work with nearly all HD controllers. These controllers have been fully tested and validated and use on-board configuration hardware DIP/jumper settings:
+
+- Most ISA "Multi-I/O" floppy drive interface adapters or high density floppy controllers
+- [ISA FDC](https://github.com/skiselev/isa-fdc) Floppy Disk/Serial Controller (PC8477B or 82077AA)
+- [DTK PII-151B](https://theretroweb.com/expansioncards/s/dtk-mini-micro-fdc-pii-151b) (DP8473) **
+- [Jameco JE1043 (D,E)](http://www.minuszerodegrees.net/manuals.htm#Jameco) / LSI LCS6610F-U (U3) **
+- [LONGSHINE LCS-6812F](https://theretroweb.com/expansioncards/s/longshine-microsystem-inc-lcs-6812f) **
+- [SOTA PE-510B](https://theretroweb.com/expansioncards/s/sota-technology-inc-floppy-i-o-plus) (ACC 3201) **
+- [MT883](https://www.vogons.org/viewtopic.php?t=66239) (DP8473/UM8398) **
+- [ACC 3201-based](https://theretroweb.com/expansioncards?itemsPerPage=24&chipIds%5B0%5D=5147) / UNIQUE-FDC (4 drives supported) **
+- CompuAdd 810 **
+- Adaptec AHA-154xCF (82077SL)
+- Adaptec ACB-2372 (82072)
+- 5170 "Combo" Diskette Adapter (765)
+- Standard PC 765/8272A/WD37C65 (fixed data rate, 360K/720K DD only)
+
+** denotes onboard hardware configuration jumpers/DIP switches are supported
+
+## Setup and configuration of drives
+
+XT's do not have standard battery backed up system configuration ([CMOS](https://en.wikipedia.org/wiki/Nonvolatile_BIOS_memory)) like AT's and later, so the BIOS must be told which types of disk drives are installed in other ways.  There are three ways to configure the types of drives installed: CMOS, DIP switch/jumpers and ROM.
+
+1. NVRAM/CMOS: This way the drive settings are set by software and kept in battery backed-up memory. This is used by all AT/286, 386+ PCs using the standard BIOS CMOS setup as well as NuXT and XT/PCs that have RTCs based on DS12x85, MC146818 or BQ3285S chips (such as the [RTC 8088](https://github.com/spark2k06/RTC8088)). Additionally, XT realtime clock boards based on the MM58167, including Intel SixPakPlus and many others are also supported. Drive types can be configued by using [GLaSETUP](#) for all supported CMOS/NVRAM.
+2. Some 8-bit high density controllers such as DTK PII-151, LSI and others have DIP switches or jumpers to configure installed drive types. Use the corresponding ROM image for that controller's DIP switch support.
+3. If all else fails, the drive types can be set by editing the ROM with a hex editor. GLaDISK uses the byte at file offset `0005` to define the disk drive types using the following table:
+
+| Drive A: | Drive B: |  File offset `0005`-`06` |
+|------------ |------------ |:------:| 
+| 3&frac12;" 1.44M | 5&frac14;" 1.2M  | `42 BE` |
+| 3&frac12;" 1.44M | None | `40 C0` |
+| 5&frac14;" 1.2M | 3&frac12;" 1.44M | `24 DC` |
+| 5&frac14;" 1.2M | None | `20 E0` |
+| 3&frac12;" 2.88M | 5&frac14;" 1.2M | `52 AE` |
+| 3&frac12;" 2.88M | 3&frac12;" 1.44M | `54 AC` |
+| 3&frac12;" 720K | 5&frac14;" 360K | `31 CF` |
+
+For other combinations use the method described below:
+
+### TL;DR Explanation
+
+GLaDISK uses two bytes to define the drive types: a byte containing the types for drive 0 and 1, followed by a checksum byte. This way it is not necessary to recompute the ROM's file checksum when editing since these two bytes will always sum to the same value.
+
+- The high nibble of hex byte offset `0005` is for drive 0 (A:) and the low nibble is drive 1 (B:). For example: a 3&frac12;" 1.44M for A: and a 5&frac14;" 1.2M for B: would be `42`.
+- If GLaDISK is configured to support four high density drives, offsets `0007`-`08` are used for drives 2 and 3.
+- In file offset `0006`, enter the negative of the drive types' hex value entered at offset `0005`. Example: `-42h = BEh` or `100h - 42h = BEh`.
+
+For example, a 3&frac12;" 1.44M for A: and a 5&frac14;" 1.2M for B:
+```
+          00 01 02 03 04 05 06 07 08 ...
+  Drives:                AB -AB
+00000000: 55 AA 08 EB 5D 42 BE 0A 47 ...
+```
+
+#### Standard CMOS drive types
+
+| Drive Type | Value |
+|------------ |:------:| 
+| Not installed | `0` |
+| 5&frac14;" 360K DD | `1` |
+| 5&frac14;" 1.2M HD | `2` |
+| 3&frac12;" 720K DD | `3` |
+| 3&frac12;" 1.44M HD | `4` |
+| 3&frac12;" 2.88M HD | `5` |
+
+Note: The persistent storage of drive types using NVRAM, hardware switches or ROM is referred to in GLaDISK as "[CMOS](https://en.wikipedia.org/wiki/Nonvolatile_BIOS_memory)" on POST screen display and inline documentation.
+
+
+
