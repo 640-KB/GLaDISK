@@ -59,7 +59,8 @@ XT's do not have standard battery backed up system configuration ([CMOS](https:/
 
 For other combinations use the method described below:
 
-### TL;DR Explanation
+> [!WARNING]
+> __TL;DR Explanation__
 
 GLaDISK uses two bytes to define the drive types: a byte containing the types for drive 0 and 1, followed by a checksum byte. This way it is not necessary to recompute the ROM's file checksum when editing since these two bytes will always sum to the same value.
 
@@ -87,24 +88,31 @@ For example, a 3&frac12;" 1.44M for A: and a 5&frac14;" 1.2M for B:
 
 Note: The persistent storage of drive types using NVRAM, hardware switches or ROM is referred to in GLaDISK as "[CMOS](https://en.wikipedia.org/wiki/Nonvolatile_BIOS_memory)" on POST screen display and inline documentation.
 
-### Build:
+## How to Build:
 
 Using MASM 5: `MAKE GLATICK.MAK`.  
 
 The included `OPT2ROM.COM` will convert the produced EXE file to a 4 KiB ROM file.
 
-### TODO
-- 82072/82077:
-- - PMODE on standard command, sent on drive change on SPECIFY
-- - CONFIGURE on reset for FDCs that don't support LOCK
-- Double recal based on FDC detection
-- Implied seek (EIS)
-- - Disable for double-stepping 360/1.2 disks
-- - Use only if support detected
-- - Implement NSC/MODE type (DP8473)
-- - Correct Head settle timers on NSC FDCs
-- MULTI_MOTOR: Leave motors on when switching between drives to eliminate spin up time
-- Four drive support using CMOS/NVRAM for AT, NS
+## TODO
+
+- [ ] BUG: NS and AT CMOS detection conflict when both enabled
+- [ ] BUG: shows B drive only if count is wrong?
+- [ ] Display useful error if no drives installed/configured instead of silently not loading
+- [ ] Set BDA number of drives based on CMOS and ignore MB switches or vice-versa?
+- [ ] `MULTI_MOTOR`: Leave motors on when switching between drives to eliminate spin up time
+- [ ] Four drive support using CMOS/NVRAM for AT, NS
+- [ ] Double recal based on FDC detection
+
+82072/82077:
+  - [ ] PMODE on standard command, sent on drive change on SPECIFY
+  - [ ] CONFIGURE on reset for FDCs that don't support LOCK
+
+Implied seek (EIS):
+  - [ ] Disable for double-stepping 360/1.2 disks
+  - [ ] Use only if support detected
+  - [ ] Implement NSC/MODE type (DP8473)
+  - [ ] Correct Head settle timers on NSC FDCs
 
 ### Roadmap - Future features, additional research needed
 - Tweak-able GAP3 for higher capacity formatting (similar to NFORMAT)
