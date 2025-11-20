@@ -3,8 +3,8 @@
 ## (Gizmo Linkage and Dynamic Information Storage Keeper) 
 A high density floppy disk PC Option ROM for XT, AT, 286, 386+ systems, supporting many vintage and modern floppy disk controllers.
 
-## Version 0.4.x (pre-release):
-- Download links here
+## Version 0.4 (pre-release):
+- [Download preview builds here](https://github.com/640-KB/GLaDISK/releases)
 
 ## Features
 - Drive types are software configurable using AT standard CMOS, [RTC 8088](https://github.com/spark2k06/RTC8088) or MM58167-based RTC boards
