@@ -23,7 +23,7 @@ A high density floppy disk PC Option ROM for XT, AT, 286, 386+ systems, supporti
 
 ## Hardware supported and tested
 
-GLaDISK should work with nearly all HD controllers. These controllers have been fully tested and validated and use on-board configuration hardware DIP/jumper settings:
+GLaDISK should work with nearly all HD controllers. These controllers have been fully tested and validated and use on-board configuration hardware DIP/jumper settings (denoted by **):
 
 - Most ISA "Multi-I/O" floppy drive interface adapters or high density floppy controllers
 - [ISA FDC](https://github.com/skiselev/isa-fdc) Floppy Disk/Serial Controller (PC8477B or 82077AA)
@@ -38,8 +38,6 @@ GLaDISK should work with nearly all HD controllers. These controllers have been 
 - Adaptec ACB-2372 (82072)
 - 5170 "Combo" Diskette Adapter (765)
 - Standard PC 765/8272A/WD37C65 (fixed data rate, 360K/720K DD only)
-
-** denotes onboard hardware configuration jumpers/DIP switches are supported
 
 ## Setup and configuration of drives
 
@@ -89,5 +87,30 @@ For example, a 3&frac12;" 1.44M for A: and a 5&frac14;" 1.2M for B:
 
 Note: The persistent storage of drive types using NVRAM, hardware switches or ROM is referred to in GLaDISK as "[CMOS](https://en.wikipedia.org/wiki/Nonvolatile_BIOS_memory)" on POST screen display and inline documentation.
 
+### Build:
 
+Using MASM 5: `MAKE GLATICK.MAK`.  
+
+The included `OPT2ROM.COM` will convert the produced EXE file to a 4 KiB ROM file.
+
+### TODO
+- 82072/82077:
+- - PMODE on standard command, sent on drive change on SPECIFY
+- - CONFIGURE on reset for FDCs that don't support LOCK
+- Double recal based on FDC detection
+- Implied seek (EIS)
+- - Disable for double-stepping 360/1.2 disks
+- - Use only if support detected
+- - Implement NSC/MODE type (DP8473)
+- - Correct Head settle timers on NSC FDCs
+- MULTI_MOTOR: Leave motors on when switching between drives to eliminate spin up time
+- Four drive support using CMOS/NVRAM for AT, NS
+
+### Roadmap - Future features, additional research needed
+- Tweak-able GAP3 for higher capacity formatting (similar to NFORMAT)
+- PS/2 compatibility
+- 8" floppy support (FM)
+- [Twaddle](https://wiki.osdev.org/Floppy_Disk_Controller#DIR_register,_Disk_Change_bit) (fact or fiction?). Drive/controller combinations where this works?
+
+Copyright &copy; 2023-2025, [640KB](mailto:640kb@glabios.org) and contributors.
 
