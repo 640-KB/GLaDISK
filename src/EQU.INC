@@ -72,9 +72,10 @@ FDCM_360		EQU	1			; 360K DD
 FDCM_12		EQU	2			; 1.2M HD
 FDCM_720		EQU	3			; 720K DD
 FDCM_14		EQU	4			; 1.44M HD
-FDCM_28		EQU	5			; 2.88 HD
-FDCM_28B		EQU	6			; 2.88 HD ALT
+FDCM_28A		EQU	5			; 2.88 HD
+FDCM_28B		EQU	6			; 2.88 HD ALT (Phoenix)
 FDCM_8		EQU	7			; 8"
+FDCM_28		EQU	FDCM_28A		; Use standard CMOS type
 
 FDCM_MAX		EQU	FDCM_28		; highest valid drive type
 

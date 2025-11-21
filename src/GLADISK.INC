@@ -22,13 +22,13 @@ IS_TURBO		= 	1		; optimize for faster CPUs
 ; If unsure, try Advanced HD controller or leave all commented out for
 ; fully customized settings further down.
 ;
-;FDC_MODEL	=	FDC_MODEL_ADV	; Advanced high density controller
+FDC_MODEL	=	FDC_MODEL_ADV	; Advanced high density controller
 ;FDC_MODEL	=	FDC_MODEL_HD	; Basic high density controller
 ;FDC_MODEL	=	FDC_MODEL_5170	; 5170 "combo card" controller (765)
 ;FDC_MODEL	=	FDC_MODEL_DTK	; DTK PII-151B (DP8473)
 ;FDC_MODEL	=	FDC_MODEL_LSI1	; LCS-6610F-U (765)
 ;FDC_MODEL	=	FDC_MODEL_LSI2	; LCS-6812F/6814F Rev A2 (DP8473)
-FDC_MODEL	=	FDC_MODEL_ACC	; ACC 3201
+;FDC_MODEL	=	FDC_MODEL_ACC	; ACC 3201
 ;FDC_MODEL	=	FDC_MODEL_CA	; CompuAdd 810 (765)
 ;FDC_MODEL	=	FDC_MODEL_PE510	; PE-510 (DP8473)
 
@@ -166,7 +166,7 @@ BANNER_VER		=	1	; display version number on banner
 BANNER_BLD		=	0	; display build details (CPU, ARCH, FDC)
 BANNER_TAG		=	1	; display tagline
 BANNER_DATE		=	0	; display release date
-
+CMOS_VAL_TYPE	=	1	; validate CMOS types, set to 0/None if invalid
 
 
 ;----------------------------------------------------------------------------;

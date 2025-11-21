@@ -3,18 +3,21 @@
 
 ;----------------------------------------------------------------------------;
 ; GLaDISK (Gizmo Linkage and Dynamic Information Storage Keeper)
-; Copyright (c) 2024-2025, 640KB and contributors
+; Copyright (c) 2024, 640KB and contributors
 ;----------------------------------------------------------------------------;
 INCLUDE	GLADISK.INC
 
 VERIFY_CHECKSUM		EQU	1		; verify CMOS checksum
 VERIFY_SET_CHECKSUM_BIT	EQU	0		; update checksum status bit
+TEST_IPL_14H		EQU	0		; test CMOS Equpt bit 0 for IPL
+TYPE6_FIX			=	0		; don't adjust drive type 6 to type 5
 
 ;----------------------------------------------------------------------------;
 ; Supported I/O address ports for AT CMOS, MC146818, DS12x85
 ;
 				IF ARCH_TYPE EQ ARCH_AT
 CMOS_IO_PORTS	EQU	< 70H >		; AT should only be 70H
+TYPE6_FIX			=	1		; adjust drive type 6 to type 5
 				ELSE
 					IF FDC_MODEL EQ FDC_MODEL_NUXT
 CMOS_IO_PORTS	EQU	< 70H, 240H, 2C0H > ; 70H is default port on NuXT
@@ -118,11 +121,14 @@ CHKSUM_OK:
 
 ;----------------------------------------------------------------------------;
 ; Get number of drives installed
+; Note: IPL bit 0 may be unreliable on later BIOSes
 ;
 	MOV	AL, CM_EQ			; Installed Equipment (14H)
 	CALL	READ_CMOS_AT
+			IF TEST_IPL_14H EQ 1
 	TEST	AL, MASK IPL		; 0 drives installed?
 	JZ	SETUP_CMOS_AT_DONE
+			ENDIF
 	AND	AL, MASK FLP		; isolate floppy bits
 	ROL	AL, 1				; move to low bits
 	ROL	AL, 1
@@ -133,6 +139,26 @@ CHKSUM_OK:
 ;
 	MOV	AL, CM_FD			; Diskette drive types (10H)
 	CALL	READ_CMOS_AT
+
+			IF TYPE6_FIX EQ 1
+;----------------------------------------------------------------------------;
+; Fix CMOS type 6 (Phoenix) - adjust to 5
+;
+	MOV	DX, AX				; save AL
+	AND	AL, MASK FDS0 OR MASK FDT0	; isolate high nibble (drive 0)
+	CMP	AL, FDCM_28B SHL 4
+	JNE	NOT_D0_TYPE6
+	SUB	DL, DNB < 1, 0 >			; decrement to 5
+NOT_D0_TYPE6:
+	MOV	AL, DL				; restore AL
+	AND	AL, MASK FDS1 OR MASK FDT1	; isolate low nibble (drive 1)
+	CMP	AL, FDCM_28B
+	JNE	NOT_D1_TYPE6
+	SUB	DL, DNB < 0, 1 >			; decrement to 5
+NOT_D1_TYPE6:
+	XCHG	AX, DX
+			ENDIF				; /IF TYPE6_FIX EQ 1
+
 	AND	AL, MASK FDT0 OR MASK FDT1 ; ZF if no drives installed, CF = 0
 
 SETUP_CMOS_AT_DONE:

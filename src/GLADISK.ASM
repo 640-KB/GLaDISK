@@ -80,7 +80,7 @@ COPY_YEAR	EQU	'2025'
 ; - IBM 5170 "combo card" FDC/HDC adapter (765)
 ; - LSI LCS6610F-U (U3) aka Jameco JE1043 (D,E)
 ; - Adaptec AHA-154xCF (82077AA)
-; - ISA FDC Floppy Disk/Serial Controller (PC8477B or 82077AA)
+; - ISA FDC Floppy Disk/Serial Controller (PC8477B or 82077xx)
 ; - DTK PII-151B (DP8473)
 ; - LSI LCS-6812F (DP8473)
 ; - Generic "MT-883" board (1EFH)
@@ -90,6 +90,7 @@ COPY_YEAR	EQU	'2025'
 ;
 ; TODO/Testing needed:
 ; - Lo-Tech Quad-Flop (4 drive)
+; - https://github.com/sorphin/Modified_XT-FDC_ForQuadFloppies
 ; - Sunix "SUN-4300" (3F0H)
 ; - Compacticard IV
 ; - "Cursed XT controller" (this is standard XT DD controller that has been
@@ -341,7 +342,7 @@ ROM_INIT	PROC
 	POPF						; restore flags and exit
 	RETF
 
-ERR_CPU	DB	'Unsupported CPU', SZ	; TODO: we can do better than this
+ERR_CPU	DB	'Unsupported CPU', SZ
 CPU_OKAY:
 			ENDIF
 
@@ -383,12 +384,9 @@ CPU_OKAY:
 SETUP_IVT_DONE_1:	
 	JMP	SETUP_IVT_DONE			; near jump for exit
 
-;----------------------------------------------------------------------------;
-; Set up ISR vectors
-;----------------------------------------------------------------------------;
 SETUP_DRIVE_COUNT:
 	CALL	GET_MAX_DRIVE_COUNT		; AL = # drives installed according to BDA
-	;FD_DEBUG	'DC'
+	;FD_DEBUG	'MDC'
 	JZ	SETUP_IVT_DONE_1			; exit if zero drives
 
 ;----------------------------------------------------------------------------;
@@ -535,7 +533,10 @@ SETUP_IVT_OK:
 	TEST	AL, AL				; check returned drive types
 	JZ	SETUP_IVT_DONE_1			; exit if both are 0
 							; TODO: display error here
-	MOV	FD_CMOS_TYPE_ABS, AL		; set CMOS type in BDA
+			IF CMOS_VAL_TYPE EQ 1
+	CALL	CMOS_VER_TYPE			; verify drives in AL are valid
+			ENDIF
+	MOV	FD_CMOS_TYPE_ABS, AL		; save CMOS type to BDA
 
 			IF FDC_MAX_DRIVES GT 2
 ;----------------------------------------------------------------------------;
@@ -556,6 +557,9 @@ SETUP_IVT_OK:
 				ENDIF
 			ENDIF
 	;FD_DEBUG 'FD2_CMOS'
+			IF CMOS_VAL_TYPE EQ 1
+	CALL	CMOS_VER_TYPE			; verify drives in AL are valid
+			ENDIF
 	MOV	FD2_CMOS_TYPE_ABS, AL		; set CMOS type in BDA
 
 			ENDIF
@@ -621,7 +625,6 @@ CHECK_AT_WAIT:
 	STC						; if CF is cleared, function exists
 	INT	15H					; wait CX:DX microseconds
 	STI						; ensure BIOS returns with IF=1
-	;JC	TEST_AT_WAIT_DONE			; if failure, use XT WAIT
 	JC	SETUP_ISR_XT			; if failure, use XT WAIT and setup
 
 ;----------------------------------------------------------------------------;
@@ -655,7 +658,7 @@ SETUP_ISR_AT:
 	MOV	AL, CM_HD				; 12H CMOS hard drive type
 	MOV	DX, ATC_IDX				; default AT CMOS port
 	CALL	READ_CMOS_AT
-	FD_DEBUG 'READ_CMOS_AT'
+	;FD_DEBUG 'READ_CMOS_AT'
 
 ;----------------------------------------------------------------------------;
 ; SI = IVT INT 13 (004CH)
@@ -774,6 +777,7 @@ SETUP_FD_ISR:
 ;----------------------------------------------------------------------------;
 	;CALL	GET_DRIVE_COUNT			; AX = # of drives (1 based)
 	CALL	GET_MAX_DRIVE_COUNT		; AX = # of drives (1 based)
+	FD_DEBUG 'DC'
 	XCHG	AX, DX				; DX = # of drives (1 based), AH = 0
 SETUP_DRIVE_LOOP:
 	DEC	DX					; pre-decrement since count is 1 based
@@ -980,7 +984,6 @@ SHOW_CMOS_TYPE_DONE:
 
 ;----------------------------------------------------------------------------;
 ; Display drive letters and types
-; TODO: don't skip drives if not valid - use None (or something)
 ;
 	MOV	AH, 8					; get drive count and first drive info
 	CWD						; DL = drive 0
@@ -991,24 +994,26 @@ SHOW_CMOS_TYPE_DONE:
 	MOV	CL, DL				; CX = number of drives
 	CWD						; DX = 0
 
-	TEST	BL, BL				; ZF if CMOS type 'None'
-	;JZ	SHOW_DRIVE_TYPES_DONE		; TODO or skip?
-	JZ	NEXT_DRIVE				; skip this drive?
+	;TEST	BL, BL				; ZF if CMOS type 'None'
+	;JZ	NEXT_DRIVE				; skip this drive
 
+;----------------------------------------------------------------------------;
+; Display each drive
+;
 SHOW_DRIVE:
 	MOV	DI, BX				; DI = CMOS type
-
 	PUSH	CX					; preserve loop counter
 	SET_SZ_ATTR	 POST_CLR_TXT, 1		; set next char to be text color
 	MOV	AL, DL				; AL = drive number (0-1)
 	ADD	AL, 'A'				; convert to drive letter
 	CALL	OUT_CHAR				; write drive letter
 	POST_COL_1  S_COLON, POST_CLR_VAL1	; start column 1
-	;FD_DEBUG	'DRV'
+	CMP	DI, DRV_N_SZ			; drive type valid in table?
+	JB	SHOW_CMOS_TYPE_OK
+	XOR	DI, DI				; if out of range, display "None"
+SHOW_CMOS_TYPE_OK:
 	SHL	DI, 1					; word align drive type table index 
-	;MOV	SI, CS:DRV_N_TBL[-2][DI]	; SI = drive type string, 1 based index
 	MOV	SI, CS:DRV_N_TBL[DI]		; SI = drive type string, 1 based index
-	;FD_DEBUG	'DRV2'
 	CALL	OUT_SZ				; write string
 	POST_COL_END_NL				; end column 1
 	POP	CX
@@ -1053,6 +1058,7 @@ DRV_N_TBL	DW	OFFSET S_NONE
 		DW	OFFSET S_720
 		DW	OFFSET S_144
 		DW	OFFSET S_288
+DRV_N_SZ	EQU	($-DRV_N_TBL)/2
 
 SHOW_DRIVE_TYPES ENDP
 			ASSUME DS:NOTHING
@@ -1550,6 +1556,30 @@ VERIFY_CPU_DONE:
 	RET
 VERIFY_CPU ENDP
 		ENDIF
+
+		IF CMOS_VAL_TYPE EQ 1
+;----------------------------------------------------------------------------;
+; Verify all drives are in valid CMOS type range, if not set to 0
+;----------------------------------------------------------------------------;
+; Input: AL = drive type packed nibble
+; Output: AL = drive type, type is 0 if out of range
+;----------------------------------------------------------------------------;
+CMOS_VER_TYPE PROC
+	CMP	AL, DNB < FDCM_MAX+1, 0 >	; check max valid in high nibble
+	JC	CMOS_D0_VALID			; high nibble out of range?
+	AND	AL, NOT (MASK FDS0 OR MASK FDT0)	; drive 0 = 0
+CMOS_D0_VALID:
+	CMP	AL, DNB < 0, FDCM_MAX+1 >	; check max valid in low nibble
+	PUSH	AX					; save AH
+	LAHF						; save half carry/AF flag
+	TEST	AH, MASK FAF			; ZF = ! AF
+	POP	AX					; restore AH
+	JNZ	CMOS_D1_VALID			; low nibble out of range?
+	AND	AL, NOT (MASK FDS1 OR MASK FDT1)	; drive 1 = 0
+CMOS_D1_VALID:
+	RET
+CMOS_VER_TYPE ENDP
+		ENDIF					; /CMOS_VAL_TYPE
 
 ;----------------------------------------------------------------------------;
 ; END of ROM
