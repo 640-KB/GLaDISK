@@ -634,8 +634,8 @@ PRINT_REGS PROC
 	CALL	SPACE
 
 	XCHG	AX, DI				; display SI:DI
-	;MOV	BX, SI
-	MOV	BX, BP				; display BP:DI
+	MOV	BX, SI
+	;MOV	BX, BP				; display BP:DI
 	CALL	DWORD_HEX
 	CALL	SPACE
 
