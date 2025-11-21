@@ -90,6 +90,8 @@ Note: The persistent storage of drive types using NVRAM, hardware switches or RO
 
 ## How to Build:
 
+Configure desired build options in `GLASETUP.INC`
+
 Using MASM 5: `MAKE GLATICK.MAK`.  
 
 The included `OPT2ROM.COM` will convert the produced EXE file to a 4 KiB ROM file.
