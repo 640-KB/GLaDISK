@@ -100,7 +100,7 @@ FDC_NO_POLL		=	0		; disable drive POLL via CONFIGURE to
 ;----------------------------------------------------------------------------;
 ; NVRAM-based (CMOS) drive type config setting supported - multiple may be enabled
 ;
-CMOS_TYPE_AT	=	1		; AT/MC146818/DS18x85, ports 70, 240, 2C0
+;CMOS_TYPE_AT	=	1		; AT/MC146818/DS18x85, ports 70, 240, 2C0
 ;CMOS_TYPE_NS	=	1		; MM51687 (NS), ports 240, 2C0
 
 ;----------------------------------------------------------------------------;
@@ -109,7 +109,7 @@ CMOS_TYPE_AT	=	1		; AT/MC146818/DS18x85, ports 70, 240, 2C0
 ;
 ;FDC_TYPE	=	FDC_TYPE_DD		; 765/8272 double density controller only
 ;FDC_TYPE	=	FDC_TYPE_HD1	; Basic HD: WD37C65 / 765B (HD1)
-FDC_TYPE	=	FDC_TYPE_HD2	; 82072 (HD2)
+;FDC_TYPE	=	FDC_TYPE_HD2	; 82072 (HD2)
 ;FDC_TYPE	=	FDC_TYPE_HD3	; 82077 (HD3)
 ;FDC_TYPE	=	FDC_TYPE_ADV	; 82077+, PC8477B (HD4)
 ;FDC_TYPE	=	FDC_TYPE_NSC	; NSC DP8473 only
