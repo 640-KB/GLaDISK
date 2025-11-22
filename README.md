@@ -99,7 +99,7 @@ The included `OPT2ROM.COM` will convert the produced EXE file to a 4 KiB ROM fil
 ## TODO
 
 - [ ] BUG: NS and AT CMOS detection conflict when both enabled
-- [ ] BUG: shows B drive only if count is wrong?
+- [x] BUG: shows B drive only if CMOS data is invalid or count is wrong
 - [ ] Display useful error if no drives installed/configured instead of silently not loading
 - [ ] Set BDA number of drives based on CMOS and ignore MB switches or vice-versa?
 - [ ] `MULTI_MOTOR`: Leave motors on when switching between drives to eliminate spin up time
