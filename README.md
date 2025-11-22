@@ -116,8 +116,9 @@ Implied seek (EIS):
   - [ ] Implement NSC/MODE type (DP8473)
   - [ ] Correct Head settle timers on NSC FDCs
 
-### Roadmap - Future features, additional research needed
+### Roadmap / Future features, additional research needed
 - Tweak-able GAP3 for higher capacity formatting (similar to NFORMAT)
+- Multiple controllers
 - PS/2 compatibility
 - 8" floppy support (FM)
 - [Twaddle](https://wiki.osdev.org/Floppy_Disk_Controller#DIR_register,_Disk_Change_bit) (fact or fiction?). Drive/controller combinations where this works?
