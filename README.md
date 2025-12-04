@@ -99,7 +99,7 @@ The included `OPT2ROM.COM` will convert the produced EXE file to a 4 KiB ROM fil
 ## TODO
 
 - [ ] BUG: NS and AT CMOS detection conflict when both enabled
-- [ ] BUG: shows B drive only if count is wrong?
+- [x] BUG: shows B drive only if CMOS data is invalid or count is wrong
 - [ ] Display useful error if no drives installed/configured instead of silently not loading
 - [ ] Set BDA number of drives based on CMOS and ignore MB switches or vice-versa?
 - [ ] `MULTI_MOTOR`: Leave motors on when switching between drives to eliminate spin up time
@@ -116,8 +116,9 @@ Implied seek (EIS):
   - [ ] Implement NSC/MODE type (DP8473)
   - [ ] Correct Head settle timers on NSC FDCs
 
-### Roadmap - Future features, additional research needed
+### Roadmap / Future features, additional research needed
 - Tweak-able GAP3 for higher capacity formatting (similar to NFORMAT)
+- Multiple controllers
 - PS/2 compatibility
 - 8" floppy support (FM)
 - [Twaddle](https://wiki.osdev.org/Floppy_Disk_Controller#DIR_register,_Disk_Change_bit) (fact or fiction?). Drive/controller combinations where this works?
