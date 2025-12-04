@@ -40,6 +40,7 @@ FDC_MODEL_CA	EQU	'A'		; CompuAdd 810
 FDC_MODEL_86BOX	EQU	'B'		; 86Box
 FDC_MODEL_PE510	EQU	'C'		; PE-510
 FDC_MODEL_NUXT	EQU	'D'		; NuXT (PC8477) with port 70H w/AT RTC
+FDC_MODEL_QF	EQU	'Q'		; QuadFlop or XT-FDC_ForQuadFloppies
 FDC_MODEL_CUST	EQU	'Z'		; Custom
 FDC_MODEL	=	FDC_MODEL_CUST	; default
 

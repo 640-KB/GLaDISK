@@ -87,10 +87,9 @@ COPY_YEAR	EQU	'2025'
 ; - CompuAdd 810 (765 compat)
 ; - ACC 3201 (4 drive)
 ; - PE-510B (DP8473)
+; - Lo-Tech Quad-Flop (4 drive)
 ;
 ; TODO/Testing needed:
-; - Lo-Tech Quad-Flop (4 drive)
-; - https://github.com/sorphin/Modified_XT-FDC_ForQuadFloppies
 ; - Sunix "SUN-4300" (3F0H)
 ; - Compacticard IV
 ; - "Cursed XT controller" (this is standard XT DD controller that has been
@@ -775,8 +774,12 @@ SETUP_FD_ISR:
 ; Setup CMOS drives in BDA
 ; TODO: don't skip drives if not valid - use None (or something)
 ;----------------------------------------------------------------------------;
-	;CALL	GET_DRIVE_COUNT			; AX = # of drives (1 based)
+			IF FDC_BDA_MAX EQ 1
+	MOV	AL, FDC_MAX_DRIVES-1		; set BDA drive count to MAX_DRIVES
+	SET_EFLAG	FLP,1
+			ELSE
 	CALL	GET_MAX_DRIVE_COUNT		; AX = # of drives (1 based)
+			ENDIF
 	FD_DEBUG 'DC'
 	XCHG	AX, DX				; DX = # of drives (1 based), AH = 0
 SETUP_DRIVE_LOOP:

@@ -31,6 +31,7 @@ FDC_MODEL	=	FDC_MODEL_ADV	; Advanced high density controller
 ;FDC_MODEL	=	FDC_MODEL_ACC	; ACC 3201
 ;FDC_MODEL	=	FDC_MODEL_CA	; CompuAdd 810 (765)
 ;FDC_MODEL	=	FDC_MODEL_PE510	; PE-510 (DP8473)
+;FDC_MODEL	=	FDC_MODEL_QF	; QuadFlop or XT-FDC_ForQuadFloppies
 
 ;----------------------------------------------------------------------------;
 ; Default drive type configuration for ROM CMOS type
@@ -55,6 +56,7 @@ CMOS_DRIVE_TYPES	EQU	< FDCM_14, FDCM_12 >		; A: 1.44 / B: 1.2
 ;CMOS_DRIVE_TYPES	EQU	< FDCM_14, FDCM_720, FDCM_12, FDCM_14 >
 ;CMOS_DRIVE_TYPES	EQU	< FDCM_14, FDCM_12, FDCM_12, FDCM_14 >
 ;CMOS_DRIVE_TYPES	EQU	< FDCM_360, FDCM_12, FDCM_720, FDCM_14 >
+;CMOS_DRIVE_TYPES	EQU	< FDCM_360, FDCM_360, FDCM_14, FDCM_12 >
 
 ;----------------------------------------------------------------------------;
 ; Advanced Options
@@ -64,6 +66,7 @@ AT_TEST_MID		=	1		; test Machine ID byte for AT (FCH)
 CHECK_BUILD_CPU	=	0		; verify CPU is compatible with build
 FAST_STEP_RATE	=	1		; use faster head step rates for 360, 1.44 and 2.88
 FDC_ADV_SEEK	=	1		; cache head locations in BDA
+FDC_BDA_MAX		=	0		; set BDA drive count to FDX_MAX_DRIVES
 FDC_DBL_RECAL	=	1		; recal twice to 80 track media
 FDC_DSR_RESET	=	0		; use DSR reset on supported chipsets
 FDC_HLT_WAIT	=	1		; Halt CPU during FD access
@@ -247,6 +250,11 @@ FDC_MAX_DRIVES	=	2			; integrated FDC supports two drives
 IS_TURBO		= 	1
 UNITS_IEC		=	0			; use modern IEC MiB, KiB
 FDC_SOFT_POLL	=	0			; use only CONFIGURE to disable poll
+	ENDIF
+
+	IF FDC_MODEL EQ FDC_MODEL_QF
+FDC_TYPE		=	FDC_TYPE_ADV	; has 82077AA/PC8477
+FDC_MAX_DRIVES	=	4			; max 4 drives
 	ENDIF
 
 ;	IF FDC_MODEL EQ FDC_MODEL_86BOX
