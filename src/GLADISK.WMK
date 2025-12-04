@@ -1,0 +1,45 @@
+#
+# Watcom wmake makefile for GLaDISK
+#
+PROG = GLADISK
+
+# Use explicit uppercase for for case-sensitive OS filesystems
+.EXTENSIONS:
+.EXTENSIONS: .OBJ .ASM
+
+# JWasm, Wlink and Python paths
+AS		= jwasm
+LD		= wlink
+PY		= python
+B2R 	= $(PY) OPT2ROM/wbin2rom.py -s 4096
+
+# Project settings
+TARGET  = $(PROG).BIN
+ROM		= $(PROG).ROM
+OBJS    = $(PROG).OBJ CMOS_AT.OBJ CMOS_LSI.OBJ CMOS_DTK.OBJ &
+	CMOS_NS.OBJ CMOS_CA.OBJ CMOS_ACC.OBJ CMOS_GEN.OBJ &
+	INT_13.OBJ INT_13_H.OBJ GLALIB.OBJ
+
+# Note: dependencies do not appear to work with implicit rules
+DEPS	= GLADISK.INC FDC.INC EQU.INC MACROS.INC SEGS.INC CMOS.INC
+
+# Assembler / Linker run time options
+AFLAGS	= -Fl -Zm
+LFLAGS	= disable 1014 disable 1023
+
+# Default rule
+all: $(TARGET) .symbolic
+
+# Assemble each ASM file into OBJ
+.ASM.OBJ:
+	$(AS) $(AFLAGS) -Fo=$^@ $[*.ASM
+
+# Link OBJs into flat binary and add checksum byte
+$(TARGET): $(OBJS)
+    $(LD) name $(TARGET) $(LFLAGS) format raw bin file { $(OBJS) }
+    $(B2R) $(TARGET) $(ROM)
+
+# Clean up
+clean: .symbolic
+    rm *.OBJ
+    rm $(TARGET)
