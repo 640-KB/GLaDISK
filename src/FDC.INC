@@ -152,8 +152,8 @@ FFILL		DB	0F6H 	; 08 fill byte for formatted sectors
 HDST		DB	FHDST	; 09 head settle time in milliseconds
 FMST		DB	8 	; 0A motor startup time in eighths of a second
 			IF FDC_HD_ENABLE EQ 1
-TRKS		DB	39			; 0B last track
-RATE 		DB	FDC_STATE<DR_500>	; 0C data transfer rate (high) / FC_MODE (low)
+TRKS		DB	39		; 0B last track
+RATE 		DB	FSR500	; 0C data transfer rate (high) / FC_MODE (low)
 			ENDIF
 DBT ENDS
 

@@ -385,7 +385,7 @@ DMA_CR RECORD	DACK:1,DREQ:1,DWS:1,DPRI:1,DTIM:1,DDIS:1,DHLD:1,DM2M:1
 ;       1 |		- TC1		1 = Channel 1 has reached TC
 ;        0|		- TC0		1 = Channel 0 has reached TC
 ;----------------------------------------------------------------------------;
-DMA_SR RECORD	CR3:1,CR2:1,CR1:1,CR0:1,TC3:1,TC2:1,TC1:1,TC0:1
+DMA_SR RECORD	DCR3:1,DCR2:1,DCR1:1,DCR0:1,TC3:1,TC2:1,TC1:1,TC0:1
 
 ;----------------------------------------------------------------------------;
 ; 8237 DMA Single Channel Mask Register
@@ -407,7 +407,7 @@ DMA_SMR RECORD	SMCLR:6,SMCH:2
 ;        1 		- SNGL: 1 = Single mode (no cascading PICs or ICW3)
 ;         1		- IC4:  1 = ICW4 Needed
 ;----------------------------------------------------------------------------;
-ICW1	RECORD	D4:4=1, LTIM:1, ADI:1, SNGL:1=1, IC4:1=1
+ICW1	RECORD	D4:4, LTIM:1, ADI:1, SNGL:1=1, IC4:1=1
 
 ; ICW2:
 ;  00001 		- T7-T3: Interrupt Vector Address:
@@ -423,7 +423,7 @@ ICW2	RECORD	ICW2IVA:5, ICW2X:3=0
 ;        0		- AEOI: 0 = normal EOI
 ;         1		- uPM:  1 = 8086 system
 ;----------------------------------------------------------------------------;
-ICW4	RECORD	SFNM:4=0, ICWBUF:2, AEOI:1, uPM:1
+ICW4	RECORD	SFNM:4, ICWBUF:2, AEOI:1, uPM:1
 
 ;----------------------------------------------------------------------------;
 ; IMR / OCW1 Interrupt Mask

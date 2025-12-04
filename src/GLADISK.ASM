@@ -26,7 +26,7 @@
 VER_NAME	EQU	'GLaDISK'
 VER_NUM	EQU	'0.4.8'			; pre-release
 VER_DATE	EQU	'11/20/25' 			; must be MM/DD/YY format
-COPY_YEAR	EQU	'2025'
+COPY_YEAR	EQU	<'2025'>
 
 ;============================================================================;
 ;
