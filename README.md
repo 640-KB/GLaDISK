@@ -92,9 +92,19 @@ Note: The persistent storage of drive types using NVRAM, hardware switches or RO
 
 Configure desired build options in `GLASETUP.INC`
 
-Using MASM 5: `MAKE GLATICK.MAK`.  
+#### Using MASM:
 
-The included `OPT2ROM.COM` will convert the produced EXE file to a 4 KiB ROM file.
+MASM 5: `MAKE GLADISK.MAK`.  
+
+The included `OPT2ROM.COM` (DOS) will convert the produced EXE file to a 4 KiB ROM file.
+
+#### Using JWasm / Open Watcom:
+
+Build and install [JWasm 2.20 or newer](https://github.com/Baron-von-Riedesel/JWasm) and [Open Watcom `wlink` and `wmake`](https://github.com/open-watcom/open-watcom-v2).
+
+`wmake -f GLADISK.WMK`
+
+The included `wbin2rom.py` (Python) will convert wlink raw binary output to 4 KiB ROM file.
 
 ## TODO
 
