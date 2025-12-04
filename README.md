@@ -27,6 +27,7 @@ GLaDISK should work with nearly all HD controllers. These controllers have been 
 
 - Most ISA "Multi-I/O" floppy drive interface adapters or high density floppy controllers
 - [ISA FDC](https://github.com/skiselev/isa-fdc) Floppy Disk/Serial Controller (PC8477B or 82077AA)
+- [Quad-Flop](https://texelec.com/product/quad-flop-four-port-isa-floppy-controller/) Four Port Floppy Disk Controller (PC8477B or 82077AA)
 - [DTK PII-151B](https://theretroweb.com/expansioncards/s/dtk-mini-micro-fdc-pii-151b) (DP8473) **
 - [Jameco JE1043 (D,E)](http://www.minuszerodegrees.net/manuals.htm#Jameco) / LSI LCS6610F-U (U3) **
 - [LONGSHINE LCS-6812F](https://theretroweb.com/expansioncards/s/longshine-microsystem-inc-lcs-6812f) **
@@ -104,12 +105,11 @@ Build and install [JWasm 2.20 or newer](https://github.com/Baron-von-Riedesel/JW
 
 `wmake -f GLADISK.WMK`
 
-The included `wbin2rom.py` (Python) will convert wlink raw binary output to 4 KiB ROM file.
+The included `wbin2rom.py` (Python) will convert `wlink` raw binary output to a 4 KiB ROM file.
 
 ## TODO
 
 - [ ] BUG: NS and AT CMOS detection conflict when both enabled
-- [x] BUG: shows B drive only if CMOS data is invalid or count is wrong
 - [ ] Display useful error if no drives installed/configured instead of silently not loading
 - [ ] Set BDA number of drives based on CMOS and ignore MB switches or vice-versa?
 - [ ] `MULTI_MOTOR`: Leave motors on when switching between drives to eliminate spin up time
