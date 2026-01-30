@@ -37,8 +37,9 @@ GLaDISK should work with nearly all HD controllers. These controllers have been 
 - CompuAdd 810 **
 - Adaptec AHA-154xCF (82077SL)
 - Adaptec ACB-2372 (82072)
+- WD1002/A-FOX (WD37C65)
 - 5170 "Combo" Diskette Adapter (765)
-- Standard PC 765/8272A/WD37C65 (fixed data rate, 360K/720K DD only)
+- Standard PC 765/8272A (fixed data rate, 360K/720K DD only)
 
 ## Setup and configuration of drives
 
