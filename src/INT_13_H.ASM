@@ -497,7 +497,7 @@ INT_13_18 ENDP
 ;	AL = function number
 ;	DL = drive number
 ; Output:
-;	CF if disk changed
+;	CF if disk changed or seek/recal error
 ;----------------------------------------------------------------------------;
 		ASSUME DS:_BDA
 INT_13_2_5_HD_SETUP PROC
@@ -541,7 +541,7 @@ XT_V3_FIX_DONE:
 ; Media not established. Detect media on read/write/verify commands only.
 ;
 	SAHF						; ZF if format
-	JNE	INT_13_2_5_DET_MEDIA		; jump if not format command
+	JNE	INT_13_RWV_DET_MEDIA		; jump if not format command
 
 ;----------------------------------------------------------------------------;
 ; Media state is established or format command - set to default media for
@@ -549,10 +549,9 @@ XT_V3_FIX_DONE:
 ;
 INT_13_2_5_HD_EST:
 	CALL	FDC_SETUP_DRV			; send specify and set rate for new media
-
+	CLC						; CF only on media change
 INT_13_2_5_HD_SETUP_DONE:
 	POPX	BX, AX
-	CLC						; CF only on media change
 INT_13_2_5_HD_SETUP_EXIT:
 	RET
 
@@ -560,13 +559,9 @@ INT_13_2_5_HD_SETUP_EXIT:
 ; If RWV, attempt to determine media and establish the media state if success
 ; If success, exit since SPECIFY and RATE already set by FD_GET_MEDIA.
 ;
-INT_13_2_5_DET_MEDIA:
+INT_13_RWV_DET_MEDIA:
 	CALL	FD_GET_MEDIA			; detect media and attempt establish
-	JNC	INT_13_2_5_HD_SETUP_DONE	; if success, done
-
-INT_13_2_5_HD_SETUP_ERR:
-	CALL	FD_RESET_STATE			; reset to default state for drive
-	JMP	SHORT INT_13_2_5_HD_SETUP_DONE
+	JMP	INT_13_2_5_HD_SETUP_DONE	; exit with result in CF
 
 INT_13_2_5_HD_SETUP ENDP
 
@@ -868,7 +863,7 @@ FD_SET_ESTABLISH ENDP
 ; Input:
 ;	DL = drive index
 ; Output:
-;	CF if error and FDC_ST_ERR_FDC
+;	CF if error, FDC_ST_ERR_SEEK if recal/seek failure
 ;	AH = new media state
 ;	On success, media state established.
 ;	On failure, media state unestablished.
@@ -987,6 +982,7 @@ FD_TEST_MEDIA PROC
 	MOV	DH, AH				; DH = established test state
 	MOV	CL, _FD_LAST_OP			; save last op status
 	CALL	FDC_RECAL_DBL			; seek to track 0 and repeat if needed
+	JC	FD_TEST_RECAL_ERR			; exit if recal failed twice
 
 ;----------------------------------------------------------------------------;
 ; Read ID for track 0, head 0 then read track 10 and verify track IDs match.
@@ -1033,6 +1029,11 @@ FD_TEST_MEDIA_EXIT:
 
 FD_GET_MEDIA_RET:
 	RET
+
+FD_TEST_RECAL_ERR:
+	MOV	CL, FDC_ST_ERR_SEEK		; recal, seek or drive error
+	JMP	SHORT FD_TEST_MEDIA_ERR		; reset state and exit
+
 		ASSUME DS:NOTHING
 FD_TEST_MEDIA ENDP
 FD_SETUP_MEDIA ENDP
