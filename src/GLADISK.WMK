@@ -1,5 +1,9 @@
 #
-# Watcom wmake makefile for GLaDISK
+# JWasm/Watcom wmake makefile for GLaDISK
+#
+# Usage:
+#  wmake -f GLADISK.WMK
+#  wmake -f GLADISK.WMK clean
 #
 PROG = GLADISK
 
@@ -10,8 +14,8 @@ PROG = GLADISK
 # JWasm, Wlink and Python paths
 AS		= jwasm
 LD		= wlink
-PY		= python
-B2R 	= $(PY) OPT2ROM/wbin2rom.py -s 4096
+PY		= python3
+B2R 	= $(PY) ../bin/bin2rom.py
 
 # Project settings
 TARGET  = $(PROG).BIN
@@ -24,7 +28,9 @@ OBJS    = $(PROG).OBJ CMOS_AT.OBJ CMOS_LSI.OBJ CMOS_DTK.OBJ &
 DEPS	= GLADISK.INC FDC.INC EQU.INC MACROS.INC SEGS.INC CMOS.INC
 
 # Assembler / Linker run time options
-AFLAGS	= -Fl -Zm
+#AFLAGS	= -Fl -Zm
+#AFLAGS  = -Zm
+AFLAGS = -Zm -Zg -Sg -Zne
 LFLAGS	= disable 1014 disable 1023
 
 # Default rule
