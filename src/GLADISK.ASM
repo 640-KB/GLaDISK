@@ -359,6 +359,9 @@ CPU_OKAY:
 ; Unmask IRQ 6 and IRQ 0 in IMR and save
 ;
 	IN	AL, INT_IMR 			; get current OCW1/IMR register
+			IF FDC_IMR_IRQ6 EQ 1
+	AND	AL, NOT MASK IRQ6			; Ensure IRQ 6 is unmasked on return
+			ENDIF
 	PUSH	AX					; save IMR
 	STI						; interrupts enabled
 	AND	AL, NOT (MASK IRQ6 OR MASK IRQ0) ; unmask IRQ6 (FDC) and IRQ0 (timer)
@@ -724,7 +727,6 @@ SETUP_FD_ISR:
 ;
 	SETUP_ISR	INT_1E, IVT_1E
 			ENDIF
-
 
 			IF FDC_HD_ENABLE EQ 1
 ;----------------------------------------------------------------------------;

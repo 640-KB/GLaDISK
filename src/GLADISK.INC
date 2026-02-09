@@ -77,7 +77,8 @@ FDC_TWADDLE		=	0		; enable "twaddle" support (not implemented)
 FIFO_DEPTH		=	10		; FIFO threshold/depth (if supported/enabled)
 FIFO_DEPTH_PMODE	=	12		; FIFO threshold/depth (if PMODE supported)
 GLADISK_INT_0EH	=	1		; replace existing BIOS FDC IRQ
-GLADISK_INT_1EH	=	0		; replace existing BIOS default DBT
+GLADISK_INT_1EH	=	1		; replace existing BIOS default DBT
+FDC_IMR_IRQ6	=	1		; unmask IRQ6 on FDC reset
 RECAL_ON_POST	=	1		; recal all drives on POST
 UNSAFE_FLOPPY	=	1		; Use % of DBT specified disk head settle time
 ;UNSAFE_FLP_DIV	EQU	<1/2>		; 50%

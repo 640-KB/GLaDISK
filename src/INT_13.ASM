@@ -892,6 +892,16 @@ FDC_RESET PROC
 ; current DOR state will need to be re-sent to the FDC after reset.
 ;
 	CLI 						; disable interrupts
+
+			IF FDC_IMR_IRQ6 EQ 1
+;----------------------------------------------------------------------------;
+; Ensure IRQ 6 is unmasked
+;
+	IN	AL, INT_IMR 			; get current OCW1/IMR register
+	AND	AL, NOT MASK IRQ6			; unmask IRQ 6
+	OUT	INT_IMR, AL 			; send to A1 (Port 1)
+			ENDIF
+
 	MOV	AL, FD_MOTOR_ST 			; 3FH - Diskette motor status
 	MOV	CH, AL 				; save to CH
 	AND	AX, MASK FMOT			; isolate motor status flags, AH = 0
