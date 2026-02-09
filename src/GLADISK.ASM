@@ -76,7 +76,7 @@ COPY_YEAR	EQU	<'2025'>
 ; Hardware Support (tested):
 ;
 ; - PC standard 765/8272A (fixed clock, DD only)
-; - WD1002-FOX (WD37C65) (DD only)
+; - WD1002/A-FOX (WD37C65)
 ; - IBM 5170 "combo card" FDC/HDC adapter (765)
 ; - LSI LCS6610F-U (U3) aka Jameco JE1043 (D,E)
 ; - Adaptec AHA-154xCF (82077AA)
@@ -1170,7 +1170,7 @@ FDC_DETECT PROC
 ;
 	MOV	DX, 03F1H				; AT combo card diag register
 	IN	AL, DX				; read diag status
-	AND	AL, 11110000B			; mask high bits
+	AND	AL, 11111000B			; mask high bits
 	CMP	AL, 10100000B			; is combo adapter?
 	JNE	NOT_FDC_TYPE_5170			; don't set if not combo card
 	MOV	DX, 05F7H				; AT FD diag register
