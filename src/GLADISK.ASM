@@ -24,9 +24,9 @@
 ;
 ;----------------------------------------------------------------------------;
 VER_NAME	EQU	'GLaDISK'
-VER_NUM	EQU	'0.4.8'			; pre-release
-VER_DATE	EQU	'11/20/25' 			; must be MM/DD/YY format
-COPY_YEAR	EQU	<'2025'>
+VER_NUM	EQU	'0.4.9'			; pre-release
+VER_DATE	EQU	'02/04/26' 			; must be MM/DD/YY format
+COPY_YEAR	EQU	<'2026'>
 
 ;============================================================================;
 ;
@@ -1348,6 +1348,8 @@ POST_SHOW_FDC ENDP
 ;----------------------------------------------------------------------------;
 ; Clobbers AX, BX, CX, DX, DI
 ;----------------------------------------------------------------------------;
+; TODO: handle seek test failure
+;----------------------------------------------------------------------------;
 EXTRN FDC_RECAL_DBL:NEAR			; from INT_13
 POST_RECAL_DRIVES PROC
 	CALL	GET_MAX_DRIVE_COUNT		; AL = # of drives or MAX_DRIVES
@@ -1356,13 +1358,63 @@ POST_RECAL_DRIVES PROC
 	CWD						; DL = drive 0
 	XCHG	AX, CX				; CX = # of drives
 POST_RECAL_DRIVE:
+		IF POST_TEST_SEEK EQ 1
+	CALL	FDC_RECAL_SEEK_TEST
+		ELSE
 	CALL	FDC_RECAL_DBL
-	;JC	POST_RECAL_DRIVE_ERR		; will error if not track 0
+		ENDIF
+	;JC	POST_RECAL_DRIVE_ERR		; TODO: will error if not track 0
 	INC	DX
 	LOOP	POST_RECAL_DRIVE
 POST_RECAL_DRIVE_ERR:
 	RET
 POST_RECAL_DRIVES ENDP
+			ENDIF
+
+			IF POST_TEST_SEEK EQ 1
+;----------------------------------------------------------------------------;
+; FDC_RECAL_SEEK_TEST: Reset, Recalibrate and Seek test a floppy drive at POST
+;----------------------------------------------------------------------------;
+; Input:
+;	DL = drive # to test (0 = A:, 1 = B:, etc) (bounds not checked)
+;	DI = OFFSET FD_LAST_OP
+; Output:
+;	CF if error
+; Clobbers: DI, SI, AX, BX (if FDC_ADV_SEEK)
+;
+; Size: 36 bytes
+;----------------------------------------------------------------------------;
+EXTRN FDC_SEEK:NEAR				; from INT_13
+FDC_RECAL_SEEK_TEST PROC
+	PUSH	CX
+	CALL	FDC_RECAL_DBL			; Motor on, recal, DL = drive
+	JC	FDC_TEST_DRIVE_EXIT		; exit if error
+	JWB	FDC_TEST_DRIVE_DONE		; skip seek tests on warm boot
+	IO_DELAY					; short pause before seek, CX=0
+	MOV	SI, OFFSET FDC_SEEK_TRACKS
+FDC_TEST_DRIVE_SEEK:
+	LODS	BYTE PTR CS:[SI]			; next track to seek
+	MOV	CH, AL				; CH = track
+	CALL	FDC_SEEK				; CH = track, DL = drive
+	JCXZ	FDC_TEST_DRIVE_DONE		; exit if track = 0
+	JNC	FDC_TEST_DRIVE_SEEK		; loop unless error
+FDC_TEST_DRIVE_DONE:
+			IF IS_TURBO
+	MOV	CH, 80H				; longer delay for faster PCs
+			ELSE
+	MOV	CH, 40H
+			ENDIF
+	IO_DELAY					; delay between drives
+FDC_TEST_DRIVE_EXIT:
+	POP	CX
+	RET
+
+;----------------------------------------------------------------------------;
+; Track pattern for POST seek test
+;
+FDC_SEEK_TRACKS	DB	38, 2, 19, 0	; tracks (0 is end)
+
+FDC_RECAL_SEEK_TEST ENDP
 			ENDIF
 
 ;----------------------------------------------------------------------------;
@@ -1475,8 +1527,8 @@ GET_DRIVE_COUNT PROC
 	GET_EFLAG	IPL,,1			; AL = floppy IPL/flag
 	JZ	GET_DRIVE_COUNT_DONE		; jump if no FDC installed
 	GET_EFLAG	FLP,,1			; AL = # of drives
+	CMP	AL, FDC_MAX_DRIVES
 	INC	AX					; adjust to 1 based count
-	CMP	AL, FDC_MAX_DRIVES+1
 	CMC						; CF if out of range
 GET_DRIVE_COUNT_DONE:
 	POP	DS

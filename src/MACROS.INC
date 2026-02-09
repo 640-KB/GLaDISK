@@ -122,3 +122,20 @@ SKIP1		MACRO
 SKIP2		MACRO
 	DB	0A9h			; TEST	AX, imm16
 		ENDM
+
+;----------------------------------------------------------------------------;
+; Jump if Warm Boot
+;----------------------------------------------------------------------------;
+JWB		MACRO	LBL
+			ASSUME DS:_BDA
+	CMP	WARM_FLAG, WARM_BOOT		; is warm boot?
+	JE	LBL					; jump if so
+		ENDM
+
+;----------------------------------------------------------------------------;
+; Jump if not Warm Boot
+;----------------------------------------------------------------------------;
+JNWB		MACRO	LBL
+	CMP	WARM_FLAG, WARM_BOOT		; is warm boot?
+	JNE	LBL					; jump if not
+		ENDM

@@ -187,6 +187,10 @@ IO_PORT_UNUSED_2	EQU	0EBH			; 11101011
 ; Trivial RAM / data patterns
 MAGIC_WORD		EQU	0AA55H		; Magic Word used for option ROM
 
+; Warm Boot Flag options set in BDA 40:72H
+COLD_BOOT		EQU	0			; Cold Boot - All POST tests
+WARM_BOOT		EQU	1234H			; Warm Boot - Skip some POST tests
+
 ;----------------------------------------------------------------------------;
 ; Define Nibbles to Byte
 ; Convert two nibbles to byte (big endian)

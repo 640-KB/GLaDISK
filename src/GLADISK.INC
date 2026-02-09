@@ -32,6 +32,7 @@ FDC_MODEL	=	FDC_MODEL_ADV	; Advanced high density controller
 ;FDC_MODEL	=	FDC_MODEL_CA	; CompuAdd 810 (765)
 ;FDC_MODEL	=	FDC_MODEL_PE510	; PE-510 (DP8473)
 ;FDC_MODEL	=	FDC_MODEL_QF	; QuadFlop or XT-FDC_ForQuadFloppies
+;FDC_MODEL	=	FDC_MODEL_NUXT	; NuXT 2.0
 
 ;----------------------------------------------------------------------------;
 ; Default drive type configuration for ROM CMOS type
@@ -80,6 +81,7 @@ GLADISK_INT_0EH	=	1		; replace existing BIOS FDC IRQ
 GLADISK_INT_1EH	=	1		; replace existing BIOS default DBT
 FDC_IMR_IRQ6	=	1		; unmask IRQ6 on FDC reset
 RECAL_ON_POST	=	1		; recal all drives on POST
+POST_TEST_SEEK	=	0		; perform GLaBIOS style seek test on POST
 UNSAFE_FLOPPY	=	1		; Use % of DBT specified disk head settle time
 ;UNSAFE_FLP_DIV	EQU	<1/2>		; 50%
 UNSAFE_FLP_DIV	EQU	<1/3>		; 33%
@@ -249,7 +251,7 @@ CMOS_TYPE_AT	=	1			; has integrated port 70H DS12x85
 FDC_TYPE		=	FDC_TYPE_ADV	; has 82077AA/PC8477
 FDC_MAX_DRIVES	=	2			; integrated FDC supports two drives
 IS_TURBO		= 	1
-UNITS_IEC		=	0			; use modern IEC MiB, KiB
+UNITS_IEC		=	1			; use modern IEC MiB, KiB
 FDC_SOFT_POLL	=	0			; use only CONFIGURE to disable poll
 	ENDIF
 
