@@ -31,9 +31,10 @@ GLaDISK should work with nearly all HD controllers. These controllers have been 
 - [DTK PII-151B](https://theretroweb.com/expansioncards/s/dtk-mini-micro-fdc-pii-151b) (DP8473) **
 - [Jameco JE1043 (D,E)](http://www.minuszerodegrees.net/manuals.htm#Jameco) / LSI LCS6610F-U (U3) **
 - [LONGSHINE LCS-6812F](https://theretroweb.com/expansioncards/s/longshine-microsystem-inc-lcs-6812f) **
-- [SOTA PE-510B](https://theretroweb.com/expansioncards/s/sota-technology-inc-floppy-i-o-plus) (ACC 3201) **
-- [MT883](https://www.vogons.org/viewtopic.php?t=66239) (DP8473/UM8398) **
+- [SOTA FLOPPY I/O Plus](https://theretroweb.com/expansioncards/s/sota-technology-inc-floppy-i-o-plus) (ACC 3201) **
 - [ACC 3201-based](https://theretroweb.com/expansioncards?itemsPerPage=24&chipIds%5B0%5D=5147) / UNIQUE-FDC (4 drives supported) **
+- [MT883](https://www.vogons.org/viewtopic.php?t=66239) (DP8473/UM8398) **
+- PE-510B/C/D, SNB-C018 or Generic DP8473 (4 drives supported) **
 - CompuAdd 810 **
 - Adaptec AHA-154xCF (82077SL)
 - Adaptec ACB-2372 (82072)
