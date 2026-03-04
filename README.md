@@ -23,7 +23,7 @@ A high density floppy disk PC Option ROM for XT, AT, 286, 386+ systems, supporti
 
 ## Hardware supported and tested
 
-GLaDISK should work with nearly all HD controllers. These controllers have been fully tested and validated and use on-board configuration hardware DIP/jumper settings (denoted by **):
+GLaDISK should work with nearly all HD controllers. These controllers have been fully tested and validated:
 
 - Most ISA "Multi-I/O" floppy drive interface adapters or high density floppy controllers
 - [ISA FDC](https://github.com/skiselev/isa-fdc) Floppy Disk/Serial Controller (PC8477B or 82077AA)
@@ -41,6 +41,8 @@ GLaDISK should work with nearly all HD controllers. These controllers have been 
 - WD1002/A-FOX (WD37C65)
 - 5170 "Combo" Diskette Adapter (765)
 - Standard PC 765/8272A (fixed data rate, 360K/720K DD only)
+
+ ** supports on-board drive type settings hardware DIP/jumpers
 
 ## Setup and configuration of drives
 
