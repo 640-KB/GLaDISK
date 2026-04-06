@@ -17,7 +17,7 @@ OPTROM	SEGMENT BYTE PUBLIC 'CODE'
 DTK_CONF	EQU	FDC_C0		; 03F0H DTK config port
 
 ;----------------------------------------------------------------------------;
-; DTK Config register (READ) at 350H switch JP3
+; DTK Config register (READ) at 3F0H switch JP3
 ;----------------------------------------------------------------------------;
 ; 76543210
 ; 11      |			- DTKX1	always 11
