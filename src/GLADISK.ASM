@@ -46,6 +46,7 @@ COPY_YEAR	EQU	<'2026'>
 ; - Standardize banner format with GLaTICK
 ; - Finish GLaSETUP program
 ; - Remove unnecessary FDC_DEBUG calls
+; - Only install GLaDISK ISR if SW1-1 is ON? (verify functionality)
 ;
 ; TODO - AFTER INITIAL RELEASE: (ver 0.8.x)
 ; - 82072/82077:
@@ -546,7 +547,7 @@ SETUP_IVT_OK:
 ; TODO: 4 drives stored in RAM (AT or NS)
 ;----------------------------------------------------------------------------;
 
-			IF (FDC_MODEL EQ FDC_MODEL_LSI2) OR (FDC_MODEL EQ FDC_MODEL_ACC)
+			IF (CMOS_TYPE_LSI2 EQ 1) OR (CMOS_TYPE_ACC EQ 1) OR (CMOS_TYPE_PE510 EQ 1)
 ;----------------------------------------------------------------------------;
 ; Controllers with hardware switches for four drives
 ;
@@ -1117,17 +1118,17 @@ SHOW_DRIVE_TYPES ENDP
 ; 1. Check FHD bit (TBD)
 ; 2. DUMPREG command
 ;	- If error, set HD and done (only HD)
-; 3. VERSION
+; 3. VERSION command
 ;	- If 80H, set HD2 and done
 ;	- If 90H, set HD3 and continue
-; 4. UNLOCK
+; 4. UNLOCK command
 ;	- If error, done
 ;	- If success:
 ;		- set HD4
 ;		- set Enhanced PERPENDICULAR (configuration if required)
 ;		- CONFIGURE and LOCK
 ;		- continue
-; 5. MODE
+; 5. MODE command
 ;	- If error, done
 ;	- If success, set NSC
 ;

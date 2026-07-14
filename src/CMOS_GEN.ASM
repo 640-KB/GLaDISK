@@ -3,7 +3,7 @@
 
 ;----------------------------------------------------------------------------;
 ; GLaDISK (Gizmo Linkage and Dynamic Information Storage Keeper)
-; Copyright (c) 2024-2025, 640KB and contributors
+; Copyright (c) 2024-2026, 640KB and contributors
 ;----------------------------------------------------------------------------;
 INCLUDE	GLADISK.INC
 
@@ -16,7 +16,7 @@ OPTROM	SEGMENT BYTE PUBLIC 'CODE'
 
 		IF CMOS_TYPE_PE510 EQ 1
 ;----------------------------------------------------------------------------;
-; PE-510B FDC type
+; PE-510B/SNB-C018 FDC type
 ;----------------------------------------------------------------------------;
 PE510_CONF	EQU	370H				; drive select DIP SW1 I/O port
 			IF SHOW_FDC EQ 1
@@ -27,7 +27,7 @@ S_CM_PE510	DB	'PE-510', SZ
 ; PE-510 Config register (READ) at 370H switch SW1
 ;----------------------------------------------------------------------------;
 ; 76543210
-; 4 drive model PE-510C: (not implemented)
+; 4 drive model PE-510C/SNB-C018:
 ; xx      |			- P5D2	drive 2 (00=1.44, 01=1.2, 10=720, 11=360)
 ;   xx    |			- P5D3	drive 3 (00=1.44, 01=1.2, 10=720, 11=360)
 ; 2 drive model PE-510B:
@@ -35,7 +35,7 @@ S_CM_PE510	DB	'PE-510', SZ
 ;     xx  |			- P5D0	drive 0 (00=1.44, 01=1.2, 10=720, 11=360)
 ;       xx|			- P5D1	drive 1 (00=1.44, 01=1.2, 10=720, 11=360)
 ;----------------------------------------------------------------------------;
-PE510_CFG RECORD	P5X1:4=0FH, P5D0:2, P5D1:2
+PE510_CFG RECORD	P5D2:2=11B, P5D3:2=11B, P5D0:2, P5D1:2
 
 ;----------------------------------------------------------------------------;
 ; Read drive select SW1 on PE-510B card
@@ -43,11 +43,12 @@ PE510_CFG RECORD	P5X1:4=0FH, P5D0:2, P5D1:2
 ; Input:
 ;	DS = BDA_ABS (0000)
 ; Output:
-;	AL = CMOS type byte
+;	AL = CMOS type byte drives 0,1
+;	AH = CMOS type byte drives 2,3 (if enabled)
 ;	BP = display string
 ;	always NC
 ;
-; Clobbers: AH, DX
+; Clobbers: AH, DX, CX
 ;----------------------------------------------------------------------------;
 ; Switches are labeled as UP/DOWN, read from low nibble of 370H.
 ; A: bits 1-0, B: bits 2-3.
@@ -61,12 +62,32 @@ PE510_CFG RECORD	P5X1:4=0FH, P5D0:2, P5D1:2
 			ASSUME DS:_BDA_ABS
 PUBLIC SETUP_CMOS_PE510
 SETUP_CMOS_PE510	PROC
+
+			IF SHOW_FDC EQ 1
+	MOV	BP, OFFSET S_CM_PE510
+			ENDIF
+
 	MOV	DX, PE510_CONF			; drive select DIP SW1
 	IN	AL, DX
+
+			IF FDC_MAX_DRIVES EQ 4
+;----------------------------------------------------------------------------;
+; Read four drives for PE-510C/SNB-C018
+;
+	MOV	CL, 4					; nibble size
+	SHR	AL, CL				; move high drives into low
+	CALL	PE510_READ_SW			; AL = high drives
+	MOV	CH, AL				; save high drives
+	IN	AL, DX				; re-read drive switch
+	CALL	PE510_READ_SW			; AL = low drives
+	MOV	AH, CH				; high drives into AH
+	RET
+			ENDIF
 
 ;----------------------------------------------------------------------------;
 ; Swap drive numbers as read from SW1
 ;
+PE510_READ_SW:
 	AND	AX, MASK P5D0 OR MASK P5D1	; isolate drive bits
 	ROR	AX, 1					; roll drive 0 into high bits of AH
 	ROR	AX, 1
@@ -74,9 +95,6 @@ SETUP_CMOS_PE510	PROC
 	SHR	AH, 1
 	OR	AL, AH				; combine nibbles
 	ADD	AL, 11H				; increment to CMOS 1-based types
-			IF SHOW_FDC EQ 1
-	MOV	BP, OFFSET S_CM_PE510
-			ENDIF
 	RET
 SETUP_CMOS_PE510 ENDP
 			ASSUME DS:NOTHING

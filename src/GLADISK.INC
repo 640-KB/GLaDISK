@@ -43,6 +43,7 @@ FDC_MODEL	=	FDC_MODEL_ADV	; Advanced high density controller
 ;CMOS_DRIVE_TYPES	EQU	< FDCM_28, FDCM_12 >		; A: 2.88 / B: 1.2
 CMOS_DRIVE_TYPES	EQU	< FDCM_14, FDCM_12 >		; A: 1.44 / B: 1.2
 ;CMOS_DRIVE_TYPES	EQU	< FDCM_14, FDCM_NONE >		; A: 1.44 / B: none
+;CMOS_DRIVE_TYPES	EQU	< FDCM_28, FDCM_NONE >		; A: 1.44 / B: none
 ;CMOS_DRIVE_TYPES	EQU	< FDCM_14, FDCM_360 >		; A: 1.44 / B: 360
 ;CMOS_DRIVE_TYPES	EQU	< FDCM_360, FDCM_14 >		; A: 1.44 / B: 360
 ;CMOS_DRIVE_TYPES	EQU	< FDCM_12, FDCM_14 >		; A: 1.2 / B: 1.44
@@ -50,8 +51,10 @@ CMOS_DRIVE_TYPES	EQU	< FDCM_14, FDCM_12 >		; A: 1.44 / B: 1.2
 ;CMOS_DRIVE_TYPES	EQU	< FDCM_720, FDCM_NONE >		; A: 720 / B: none
 ;CMOS_DRIVE_TYPES	EQU	< FDCM_360, FDCM_360 >		; A: 360 / B: 360
 ;CMOS_DRIVE_TYPES	EQU	< FDCM_720, FDCM_360 >		; A: 720 / B: 360
+;CMOS_DRIVE_TYPES	EQU	< FDCM_720, FDCM_720 >		; A: 720 / B: 720
 
 ;CMOS_DRIVE_TYPES	EQU	< FDCM_14, FDCM_12, FDCM_14, FDCM_12 >
+;CMOS_DRIVE_TYPES	EQU	< FDCM_14, FDCM_12, FDCM_360, FDCM_360 >
 ;CMOS_DRIVE_TYPES	EQU	< FDCM_14, FDCM_720, FDCM_12, FDCM_360 >
 ;CMOS_DRIVE_TYPES	EQU	< FDCM_14, FDCM_12, FDCM_720, FDCM_14 >
 ;CMOS_DRIVE_TYPES	EQU	< FDCM_14, FDCM_720, FDCM_12, FDCM_14 >
@@ -70,6 +73,7 @@ FDC_ADV_SEEK	=	1		; cache head locations in BDA
 FDC_BDA_MAX		=	0		; set BDA drive count to FDX_MAX_DRIVES
 FDC_DBL_RECAL	=	1		; recal twice to 80 track media
 FDC_DSR_RESET	=	0		; use DSR reset on supported chipsets
+FDC_ERR_BITS	=	1		; INT 13h status contain multiple error bits
 FDC_HLT_WAIT	=	1		; Halt CPU during FD access
 FDC_PMODE		=	0		; enable perpendicular mode for 2.88 drive/media
 FDC_PMODE_500	=	0		; enable 500K PMode GAP=1 and WGATE=0 PMODE
@@ -79,7 +83,7 @@ FIFO_DEPTH		=	10		; FIFO threshold/depth (if supported/enabled)
 FIFO_DEPTH_PMODE	=	12		; FIFO threshold/depth (if PMODE supported)
 GLADISK_INT_0EH	=	1		; replace existing BIOS FDC IRQ
 GLADISK_INT_1EH	=	1		; replace existing BIOS default DBT
-FDC_IMR_IRQ6	=	1		; unmask IRQ6 on FDC reset
+FDC_IMR_IRQ6	=	0		; unmask IRQ6 on FDC reset
 RECAL_ON_POST	=	1		; recal all drives on POST
 POST_TEST_SEEK	=	0		; perform GLaBIOS style seek test on POST
 UNSAFE_FLOPPY	=	1		; Use % of DBT specified disk head settle time
@@ -124,8 +128,8 @@ FDC_NO_POLL		=	0		; disable drive POLL via CONFIGURE to
 ; Target PC Architecture
 ;
 	IFNDEF ARCH_TYPE
-ARCH_TYPE		EQU	ARCH_5160		; PC 5160, 5150, non-Turbo
-;ARCH_TYPE		EQU	ARCH_TURBO		; Standard Turbo XT
+;ARCH_TYPE		EQU	ARCH_5160		; PC 5160, 5150, non-Turbo
+ARCH_TYPE		EQU	ARCH_TURBO		; Standard Turbo XT
 ;ARCH_TYPE		EQU	ARCH_TD3300		; TD3300A (ST-xx/UNIQUE/Auva)
 ;ARCH_TYPE		EQU	ARCH_EMU		; Emulator
 ;ARCH_TYPE		EQU	ARCH_AT		; AT, 286, 386+
@@ -242,6 +246,7 @@ IS_TURBO		= 	1
 	IF FDC_MODEL EQ FDC_MODEL_PE510
 CMOS_TYPE_PE510	=	1			; PE-510
 FDC_TYPE		=	FDC_TYPE_NSC
+;FDC_MAX_DRIVES	=	4			; max 4 drives if PE-510C/SNB-C018
 	ENDIF
 
 	IF FDC_MODEL EQ FDC_MODEL_NUXT
