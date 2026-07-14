@@ -12,7 +12,7 @@ INCLUDE	INT_13.INC
 ;----------------------------------------------------------------------------;
 ; Start of segment
 ;----------------------------------------------------------------------------;
-OPTROM	SEGMENT PUBLIC 'CODE'
+OPTROM	SEGMENT BYTE PUBLIC 'CODE'
 		ASSUME  DS:OPTROM, SS:OPTROM, CS:OPTROM, ES:OPTROM
 
 		IF FDC_HD_ENABLE EQ 1	; include if HD support enabled
@@ -1751,7 +1751,6 @@ FD_CMOS_DRIVE_TBL ENDP
 ; [15 bits 7-6]	Media data rate (.RATE)
 ; [15 bits 5-0]	Drive default FDC_MODE (drive capabilities)
 ;----------------------------------------------------------------------------;
-		;ALIGN	16		; FD_TBL must be paragraph aligned for INT_13_8
 FD_TBL LABEL BYTE
 
 ;----------------------------------------------------------------------------;
