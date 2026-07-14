@@ -21,6 +21,7 @@ FDC_B			EQU	FDC_C0		; use first controller base address
 FDC_A_STAT		EQU	FDC_B+0		; 03F0H R: Diskette controller status A
 FDC_B_STAT		EQU	FDC_B+1		; 03F1H R: Diskette controller status B
 FDC_CTRL		EQU	FDC_B+2		; 03F2H W: FD controller control port (DOR)
+FDC_TDR		EQU	FDC_B+3		; 03F3H R/W: Tape Drive Register (TDR)
 FDC_STAT		EQU	FDC_B+4		; 03F4H R: FD controller status register (MSR)
 ;FDC_MSR		EQU	FDC_B+4		; 03F4H R: FD controller status register (MSR)
 FDC_DSR		EQU	FDC_B+4		; 03F4H W: DSR and DCR Reset
@@ -295,14 +296,29 @@ FDC_CB1 RECORD	FC1X:5,FC1HD:1,FC1DS:2
 ;
 ;----------------------------------------------------------------------------;
 
+CURSED_CLK_TDC	EQU	0	; Some FDC-based tape drive adapters (Iomega
+					; Ditto Dash) double clock speed and data rates
+					; requiring non-standard rate select values.
+					; Enabling this will allow these cards to work
+					; but ONLY for high density media.
 
 ;----------------------------------------------------------------------------;
 ; BDA/FDC Drive Rates
 ;----------------------------------------------------------------------------;
+				IF CURSED_CLK_TDC EQ 1
+DR_1K			EQU	0000B			; 0 = 1000 Kb/s
+DR_600		EQU	0001B			; 1 = 600 Kb/s
+DR_500		EQU	0010B			; 2 = 500 Kb/s
+DR_300		EQU	0001B			; 1 = 300 Kb/s (not really)
+DR_250		EQU	0010B			; 2 = 250 Kb/s (not really)
+DR_2K			EQU	0011B			; 3 = 2000 Kb/s
+
+				ELSE
 DR_500		EQU	0000B			; 0 = 500 Kb/s
 DR_300		EQU	0001B			; 1 = 300 Kb/s
 DR_250		EQU	0010B			; 2 = 250 Kb/s
 DR_1K			EQU	0011B			; 3 = 1000 Kb/s
+				ENDIF
 
 ;----------------------------------------------------------------------------;
 ; 40:8B	FDC_RATE (FD_LR)	Last diskette data rate selected (Standard)
@@ -379,7 +395,7 @@ DR_1K			EQU	0011B			; 3 = 1000 Kb/s
 ;----------------------------------------------------------------------------;
 ; 84218421
 ; 76 	    |			- FLR		last floppy data rate selected (DR_*)
-;   5     |			- FLRX1	reserved
+;   5     |			- FHD5	adapter 82078, TDR support
 ;    4    |			- FNSC	adapter supports NSC cmds (DP8473/PC8477)
 ; 	3   |			- FHD4	adapter 82077AA, 82077SL+, PC8477+
 ; 	 2  |			- FHD3	adapter is 82077, 82077-1 or above
@@ -399,7 +415,7 @@ DR_1K			EQU	0011B			; 3 = 1000 Kb/s
 ;	- Implied SEEK (EIS) via CONFIGURE
 ;	- Set data rate 1MB (doesn't necessarily support pmode/2.88)
 ;	- Double recal not required
-; FDH3 (82077, 82077-1)
+; FHD3 (82077, 82077-1)
 ;	- Perpendicular mode
 ;	- VERSION
 ;	- Double recal not required
@@ -413,7 +429,7 @@ DR_1K			EQU	0011B			; 3 = 1000 Kb/s
 ;	- "Burst Mode" (whatever that is)
 ;	- Double recal required for DP8473
 ;----------------------------------------------------------------------------;
-FDC_RATE RECORD	FLR:2,FLRX1:1,FNSC:1,FHD4:1,FHD3:1,FHD2:1,FHD:1
+FDC_RATE RECORD	FLR:2,FHD5:1,FNSC:1,FHD4:1,FHD3:1,FHD2:1,FHD:1
 
 ;----------------------------------------------------------------------------;
 ; FDC feature tests
