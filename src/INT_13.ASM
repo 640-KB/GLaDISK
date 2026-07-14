@@ -139,7 +139,7 @@ INT_13_SET_MOTOR_CT:
 			IF USE_FDC_DEBUG EQ 1
 	JNC	INT_13_HD_DONE
 INT_13_ERR:
-	FD_DEBUG 'ER'
+	;FD_DEBUG 'ER'
 	;EXTRN	FDC_DUMPREG:NEAR
 	;PUSHF
 	;CALL	FDC_DUMPREG
@@ -975,7 +975,7 @@ FDC_RESET_DSR:
 ; DOR reset
 ;----------------------------------------------------------------------------;
 FDC_RESET_DOR:
-	FD_DEBUG 'DOR RST', 1
+	;FD_DEBUG 'DOR RST', 1
 	OR	AL, MASK FDDMA			; enable DMA & I/O interface, FDC reset
 	OUT	DX, AL				; send to FDC
 		IF IS_TURBO EQ 1
@@ -1372,7 +1372,11 @@ FDC_ERR_MAP_LOOP:
 FDC_WAIT_STATUS_ERR_DONE:
 	MOV	AH, AL				; AH = last result
 FDC_WAIT_ERR_EXIT:
+		IF FDC_ERR_BITS EQ 1
 	OR	_FD_LAST_OP, AH			; BDA 40:41H
+		ELSE
+	MOV	_FD_LAST_OP, AH			; BDA 40:41H
+		ENDIF
 	STC
 FDC_WAIT_ERR_EXIT_OK:
 	RET
