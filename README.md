@@ -25,21 +25,30 @@ A high density floppy disk PC Option ROM for XT, AT, 286, 386+ systems, supporti
 
 GLaDISK should work with nearly all HD controllers. These controllers have been fully tested and validated:
 
-- Most ISA "Multi-I/O" floppy drive interface adapters or high density floppy controllers
+#### i82077+ or NSC PC8477B
 - [ISA FDC](https://github.com/skiselev/isa-fdc) Floppy Disk/Serial Controller (PC8477B or 82077AA)
 - [Quad-Flop](https://texelec.com/product/quad-flop-four-port-isa-floppy-controller/) Four Port Floppy Disk Controller (PC8477B or 82077AA)
+- [NuXT v2.0](https://monotech.fwscart.com/product/nuxt-v2-0---microatx-turbo-xt---10mhz-832k-xt-ide-multi-io-svga) integrated FDC (PC8477B)
+- [Adaptec AHA-154xCF](https://theretroweb.com/expansioncards/s/adaptec-aha-1542cf) (82077SL)
+
+#### DP8473/UM8398
 - [DTK PII-151B](https://theretroweb.com/expansioncards/s/dtk-mini-micro-fdc-pii-151b) (DP8473) **
-- [Jameco JE1043 (D,E)](http://www.minuszerodegrees.net/manuals.htm#Jameco) / LSI LCS6610F-U (U3) **
-- [LONGSHINE LCS-6812F](https://theretroweb.com/expansioncards/s/longshine-microsystem-inc-lcs-6812f) **
+- [MT883](https://www.vogons.org/viewtopic.php?t=66239) (DP8473/UM8398) **
+- [LONGSHINE LCS-6812F](https://theretroweb.com/expansioncards/s/longshine-microsystem-inc-lcs-6812f), / [LSI LCS6610F-U (U3)](https://theretroweb.com/expansioncards/s/longshine-microsystem-inc-lcs-6610f) **
+- SNB-C018 or Generic DP8473 (4 drives supported) **
+  
+#### ACC 3201
 - [SOTA FLOPPY I/O Plus](https://theretroweb.com/expansioncards/s/sota-technology-inc-floppy-i-o-plus) (ACC 3201) **
 - [ACC 3201-based](https://theretroweb.com/expansioncards?itemsPerPage=24&chipIds%5B0%5D=5147) / UNIQUE-FDC (4 drives supported) **
-- [MT883](https://www.vogons.org/viewtopic.php?t=66239) (DP8473/UM8398) **
-- PE-510B/C/D, SNB-C018 or Generic DP8473 (4 drives supported) **
-- CompuAdd 810 **
-- Adaptec AHA-154xCF (82077SL)
-- Adaptec ACB-2372 (82072)
-- WD1002/A-FOX (WD37C65)
-- 5170 "Combo" Diskette Adapter (765)
+
+#### 765, 8272A or Other
+- [Adaptec ACB-2372](https://theretroweb.com/expansioncards/s/adaptec-acb-2372) (82072)
+- [WD1002/A-FOX](https://theretroweb.com/expansioncards/s/western-digital-wd1002a-fox) (WD37C65)
+- [PE-510B/C/D](https://theretroweb.com/expansioncards/s/personal-computer-communication-inc-pe-510) (765) 
+- [Jameco JE1043 (D,E)](http://www.minuszerodegrees.net/manuals.htm#Jameco) / [LSI LCS6610F Rev B](https://www.minuszerodegrees.net/rom/photo/longshine_lcs6610f_rev_b_card.jpg) (765) **
+- [CompuAdd 810](https://archive.org/details/compu-add-810-installation-operations/CompuAdd_810_Installation%26Operations/) (8272A) **
+- [5170 "Combo" Diskette Adapter](https://theretroweb.com/expansioncards/s/ibm-fixed-disk-floppy-diskette) (765)
+- Most [ISA "Multi-I/O"](https://theretroweb.com/expansioncards/s/ace-c-mega-d) floppy drive interface adapters or high density floppy controllers
 - Standard PC 765/8272A (fixed data rate, 360K/720K DD only)
 
  ** supports on-board drive type settings hardware DIP/jumpers
