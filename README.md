@@ -35,7 +35,7 @@ GLaDISK should work with nearly all HD controllers. These controllers have been 
 - [DTK PII-151B](https://theretroweb.com/expansioncards/s/dtk-mini-micro-fdc-pii-151b) (DP8473) **
 - [MT883](https://www.vogons.org/viewtopic.php?t=66239) (DP8473/UM8398) **
 - [LONGSHINE LCS-6812F](https://theretroweb.com/expansioncards/s/longshine-microsystem-inc-lcs-6812f), / [LSI LCS6610F-U (U3)](https://theretroweb.com/expansioncards/s/longshine-microsystem-inc-lcs-6610f) **
-- SNB-C018 or Generic DP8473 (4 drives supported) **
+- PE-510B/C/D, SNB-C018 or Generic DP8473 (4 drives supported) **
   
 #### ACC 3201
 - [SOTA FLOPPY I/O Plus](https://theretroweb.com/expansioncards/s/sota-technology-inc-floppy-i-o-plus) (ACC 3201) **
@@ -44,7 +44,7 @@ GLaDISK should work with nearly all HD controllers. These controllers have been 
 #### 765, 8272A or Other
 - [Adaptec ACB-2372](https://theretroweb.com/expansioncards/s/adaptec-acb-2372) (82072)
 - [WD1002/A-FOX](https://theretroweb.com/expansioncards/s/western-digital-wd1002a-fox) (WD37C65)
-- [PE-510B/C/D](https://theretroweb.com/expansioncards/s/personal-computer-communication-inc-pe-510) (765) 
+- [PE-510](https://theretroweb.com/expansioncards/s/personal-computer-communication-inc-pe-510) (765) 
 - [Jameco JE1043 (D,E)](http://www.minuszerodegrees.net/manuals.htm#Jameco) / [LSI LCS6610F Rev B](https://www.minuszerodegrees.net/rom/photo/longshine_lcs6610f_rev_b_card.jpg) (765) **
 - [CompuAdd 810](https://archive.org/details/compu-add-810-installation-operations/CompuAdd_810_Installation%26Operations/) (8272A) **
 - [5170 "Combo" Diskette Adapter](https://theretroweb.com/expansioncards/s/ibm-fixed-disk-floppy-diskette) (765)
